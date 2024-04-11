@@ -15,6 +15,7 @@
 # • 利用 random.shuffle()随机调整问题和多重选项的次序
 
 import random
+import asyncio
 
 capitals = {'Alabama': 'Montgomery', 'Alaska': 'Juneau', 'Arizona': 'Phoenix',
             'Arkansas': 'Little Rock', 'California': 'Sacramento', 'Colorado': 'Denver',
@@ -34,7 +35,8 @@ capitals = {'Alabama': 'Montgomery', 'Alaska': 'Juneau', 'Arizona': 'Phoenix',
                 'Montpelier', 'Virginia': 'Richmond', 'Washington': 'Olympia', 'WestVirginia': 'Charleston',
             'Wisconsin': 'Madison', 'Wyoming': 'Cheyenne'}
 
-for quizNum in range(35):
+
+async def generate_quiz(quizNum):
     quizFile = open('./test/test%s.txt' % (quizNum + 1), 'w')
     answerKeyFile = open('./test/test_answer%s.txt' % (quizNum + 1), 'w')
 
@@ -62,3 +64,12 @@ for quizNum in range(35):
 
     quizFile.close()
     answerKeyFile.close()
+
+
+async def main():
+    task = [generate_quiz(quizNum) for quizNum in range(35)]
+    await asyncio.gather(*task)
+
+
+if __name__ == '__main__':
+    asyncio.run(main())
