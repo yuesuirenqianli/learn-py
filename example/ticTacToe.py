@@ -1,4 +1,8 @@
-"""5.3.1 tic tac toe"""
+"""
+5.3.1 tic tac toe
+
+source: https://inventwithpython.com/chapter10.html
+"""
 
 import random
 
