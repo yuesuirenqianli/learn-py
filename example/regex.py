@@ -159,3 +159,12 @@ if len(matches) > 0:
     print('\n'.join(matches))
 else:
     print('No matches found.')
+
+
+mo10 = re.compile(r'(?<=of)\W+')
+with open('./test/test1.txt', 'r') as file:
+    content = file.read()
+
+newContent = re.sub(mo10, ' ', content)
+with open('./test/test1.txt', 'w') as file:
+    file.write(newContent)
