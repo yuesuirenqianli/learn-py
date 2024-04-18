@@ -108,7 +108,6 @@ print(m6.group())
 print(m7.group())
 print(m8.group())
 
-
 # findall()方法将返回一组字符串，包含被查找字符串中的所有匹配
 mo9 = re.compile(r'(\d\d\d)-(\d\d\d-\d\d\d)')
 print(mo9.findall('Cell: 415-555-9999 Work: 212-555-0000'))
@@ -160,7 +159,6 @@ if len(matches) > 0:
 else:
     print('No matches found.')
 
-
 mo10 = re.compile(r'(?<=of)\W+')
 with open('./test/test1.txt', 'r') as file:
     content = file.read()
@@ -189,6 +187,16 @@ print(newContent)
 
 
 def numberMatch(number):
+    """
+    匹配每 3 位就有一个逗号的数字
+    必须匹配以下数字：
+    '42'
+    '1,234'
+    '6,368,745'
+    但不会匹配：
+    '12,34,567' （逗号之间只有两位数字）
+    '1234' （缺少逗号）
+    """
     reg = re.compile(r'^\d{1,3}(?:,\d{3})*$')
     return bool(reg.search(number))
 
@@ -198,3 +206,39 @@ print(numberMatch('1,234'))
 print(numberMatch('6,368,745'))
 print(numberMatch('12,34,567'))
 print(numberMatch('1234'))
+
+
+def nameMatch(name):
+    """
+    假定名字总是出现在姓前面，是一个大写字母开头的单词
+    必须匹配
+    'Satoshi Nakamoto'
+    'Alice Nakamoto'
+    'RoboCop Nakamoto'
+    但不匹配：
+    'satoshi Nakamoto'（名字没有大写首字母）
+    'Mr. Nakamoto'（前面的单词包含非字母字符）
+    'Nakamoto' （没有名字）
+    'Satoshi nakamoto'（姓没有首字母大写）
+    """
+    reg = re.compile(r'''
+    ^
+    [A-Z]
+    [a-z]*
+    (?:\s[A-Z][a-z]*)*    # 非捕获分组，匹配一个空格后跟着一个以大写字母开头的单词，可以重复零次或多次。
+    \s
+    [A-Z][a-z]*
+    $
+    ''', re.VERBOSE)
+    return bool(reg.search(name))
+
+
+print('--------')
+print(nameMatch('Satoshi Nakamoto'))
+print(nameMatch('Alice Nakamoto'))
+print(nameMatch('RoboCop Nakamoto'))
+
+print(nameMatch('satoshi Nakamoto'))
+print(nameMatch('Mr. Nakamoto'))
+print(nameMatch('Nakamoto'))
+print(nameMatch('Satoshi nakamoto'))
