@@ -168,3 +168,14 @@ with open('./test/test1.txt', 'r') as file:
 newContent = re.sub(mo10, ' ', content)
 with open('./test/test1.txt', 'w') as file:
     file.write(newContent)
+
+
+def strongPwd(pwd):
+    """长度不少于 8 个字符，同时包含大写和小写字符，至少有一位数字"""
+    # reg = re.compile(r'([a-z]+[A-Z]+[0-9]+){8,}')
+    reg = re.compile(r'(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}')
+    return bool(re.search(reg, pwd))
+
+
+print(strongPwd('123112414412As'))
+print(strongPwd('A13awerwr23'))
