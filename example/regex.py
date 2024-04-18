@@ -179,3 +179,22 @@ def strongPwd(pwd):
 
 print(strongPwd('123112414412As'))
 print(strongPwd('A13awerwr23'))
+
+numRegex = re.compile(r'''
+    \d+     # number
+''', re.VERBOSE)
+
+newContent = numRegex.sub('*', '12 drummers, 11 pipers, five rings, 3 hens')
+print(newContent)
+
+
+def numberMatch(number):
+    reg = re.compile(r'^\d{1,3}(?:,\d{3})*$')
+    return bool(reg.search(number))
+
+
+print(numberMatch('42'))
+print(numberMatch('1,234'))
+print(numberMatch('6,368,745'))
+print(numberMatch('12,34,567'))
+print(numberMatch('1234'))
