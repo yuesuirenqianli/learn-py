@@ -242,3 +242,51 @@ print(nameMatch('satoshi Nakamoto'))
 print(nameMatch('Mr. Nakamoto'))
 print(nameMatch('Nakamoto'))
 print(nameMatch('Satoshi nakamoto'))
+
+
+def wordMatch(word):
+    """
+    第一个词是 Alice、Bob 或Carol，
+    第二个词是 eats、pets 或 throws，
+    第三个词是 apples、cats 或 baseballs。
+    该句子以句点结束。这个正则表达式应该不区分大小写。它必须匹配：
+    'Alice eats apples.'
+    'Bob pets cats.'
+    'Carol throws baseballs.'
+    'Alice throws Apples.'
+    'BOB EATS CATS.'
+    但不匹配：
+    'RoboCop eats apples.'
+    'ALICE THROWS FOOTBALLS.'
+    'Carol eats 7 cats.'
+    """
+    reg = re.compile(r'(Alice|Bob|Carol)\s(eats|pets|throws)\s(apples|cats|baseballs)\.$', re.IGNORECASE)
+    return bool(reg.search(word))
+
+
+print('-------------------')
+print(wordMatch('Alice eats apples.'))
+print(wordMatch('Bob pets cats.'))
+print(wordMatch('Carol throws baseballs.'))
+print(wordMatch('Alice throws Apples.'))
+print(wordMatch('BOB EATS CATS.'))
+
+print(wordMatch('RoboCop eats apples.'))
+print(wordMatch('ALICE THROWS FOOTBALLS.'))
+print(wordMatch('Carol eats 7 cats.'))
+
+
+def strip(strs, chars=None):
+    """
+    写一个函数，它接受一个字符串，做的事情和 strip()字符串方法一样。如果只
+    传入了要去除的字符串，没有其他参数，那么就从该字符串首尾去除空白字符。
+    否则，函数第二个参数指定的字符将从该字符串中去除。
+    """
+    if chars is None:
+        return re.sub(r'^\s+|\s+$', '', strs)
+    return re.sub(rf'^[{chars}]+|[{chars}]+$', '', strs)
+
+
+print(strip(' Alice eats apples '))
+print(strip('** & Alice eats apples & **', '*'))
+
