@@ -43,7 +43,7 @@ def file_list():
 
 def create_zip():
     new_zip = zipfile.ZipFile('test.zip', 'w')
-    new_zip.write('./test/bulletPointAdder.py', compress_type=zipfile.ZIP_DEFLATED)
+    new_zip.write('./test/bullet_point_adder.py', compress_type=zipfile.ZIP_DEFLATED)
     new_zip.close()
 
 
