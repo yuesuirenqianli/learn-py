@@ -1,3 +1,6 @@
+"""
+9.8.1
+"""
 import zipfile
 import re
 import os
@@ -21,14 +24,13 @@ def filter_files(folder_path):
 
 
 def add_to_zip(folder_path, zip_filename):
-    with zipfile.ZipFile(zip_filename, 'a') as select_zip:
+    with zipfile.ZipFile(zip_filename, 'w') as zip:
         for file_name in filter_files(folder_path):
-            select_zip.write(os.path.join(folder_path, file_name), compress_type=zipfile.ZIP_STORED)
+            zip.write(os.path.join(os.path.abspath(folder_path), file_name))
 
 
-root_path = '../test/'
-zip_path = '../test/select_zip.zip'
+root_path = '../test'
+zip_path = './select_zip.zip'
 
 
-# TODO error zip content empty
 add_to_zip(root_path, zip_path)
