@@ -8,12 +8,33 @@ Python 脚本，将这个任务自动化。
 
 import pyperclip
 
-text = pyperclip.paste()
 
-lines = text.split('\n')
+class TextProcessor:
+    def __init__(self, text=''):
+        self.text = text
 
-for i in range(len(lines)):
-    lines[i] = str(i + 1) + lines[i]
+    def paste_text(self):
+        self.text = pyperclip.paste()
 
-text = '\n'.join(lines)
-pyperclip.copy(text)
+    def add_line_numbers(self):
+        lines = self.text.split('\n')
+        for i in range(len(lines)):
+            lines[i] = str(i + 1) + ' ' + lines[i]
+        self.text = '\n'.join(lines)
+
+    def copy_text(self):
+        pyperclip.copy(self.text)
+
+    def process_text(self):
+        self.paste_text()
+        self.add_line_numbers()
+        self.copy_text()
+
+
+def main():
+    processor = TextProcessor()
+    processor.process_text()
+
+
+if __name__ == '__main__':
+    main()
