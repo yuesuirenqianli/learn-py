@@ -15,31 +15,83 @@
 import requests
 import os
 import bs4
+from abc import ABC, abstractmethod
+
+
+class PageDownloader(ABC):
+    @abstractmethod
+    def download_page(self, url: str) -> str:
+        pass
+
+
+class SimplePageDownloader(PageDownloader):
+    def download_page(self, url: str) -> str:
+        res = requests.get(url)
+        res.raise_for_status()
+        return res.text
+
+
+class ComicImageExtractor(ABC):
+    @abstractmethod
+    def extract_image_url(self, page_content: str) -> str:
+        pass
+
+
+class XKCDComicImageExtractor(ComicImageExtractor):
+    def extract_image_url(self, page_content: str) -> str:
+        soup = bs4.BeautifulSoup(page_content, "html.parser")
+        comic_elem = soup.select("#comic img")
+        if not comic_elem:
+            raise ValueError('Could not find comic image.')
+        return f'http:{comic_elem[0].get('src')}'
+
+
+class ImageDownloader(ABC):
+    @abstractmethod
+    def download_image(self, image_url: str, save_path: str) -> None:
+        pass
+
+
+class SimpleImageDownloader(ImageDownloader):
+    def download_image(self, image_url: str, save_path: str) -> None:
+        res = requests.get(image_url)
+        res.raise_for_status()
+        with open(save_path, 'wb') as image_file:
+            for chunk in res.iter_content(100000):
+                image_file.write(chunk)
+
+
+class XKCDComicScraper:
+    def __init__(self, downloader: PageDownloader, extractor: ComicImageExtractor, image_downloader: ImageDownloader) -> None:
+        self.downloader = downloader
+        self.extractor = extractor
+        self.image_downloader = image_downloader
+
+    def scrape_comics(self, start_url: str, save_dir: str) -> None:
+        os.makedirs(save_dir, exist_ok=True)
+        url = start_url
+        while not url.endswith('#'):
+            print('Downloading page %s...' % url)
+            page_content = self.downloader.download_page(url)
+            try:
+                comic_url = self.extractor.extract_image_url(page_content)
+                save_path = os.path.join(save_dir, os.path.basename(comic_url))
+                print(f'Downloading image {comic_url}...')
+                self.image_downloader.download_image(comic_url, save_path)
+            except Exception as e:
+                print(e)
+
+            soup = bs4.BeautifulSoup(page_content, 'html.parser')
+            prev_link = soup.select('a[rel="prev"]')[0]
+            url = 'https://xkcd.com' + prev_link.get('href')
 
 
 def main():
-    url = 'https://xkcd.com'
-    os.makedirs('xkcd', exist_ok=True)
-    while not url.endswith('#'):
-        print('Downloading page %s...' % url)
-        res = requests.get(url)
-        res.raise_for_status()
-        soup = bs4.BeautifulSoup(res.text, 'html.parser')
-        comicElem = soup.select('#comic img')
-        if not comicElem:
-            print('Could not find comic image.')
-        else:
-            comicUrl = f'http:{comicElem[0].get('src')}'
-            print('Downloading image %s...' % comicUrl)
-            res = requests.get(comicUrl)
-            res.raise_for_status()
-            imageFile = open(os.path.join('xkcd', os.path.basename(comicUrl)), 'wb')
-            for chunk in res.iter_content(100000):
-                imageFile.write(chunk)
-            imageFile.close()
-
-        prevLink = soup.select('a[rel="prev"]')[0]
-        url = 'https://xkcd.com' + prevLink.get('href')
+    downloader = SimplePageDownloader()
+    extractor = XKCDComicImageExtractor()
+    image_downloader = SimpleImageDownloader()
+    scraper = XKCDComicScraper(downloader, extractor, image_downloader)
+    scraper.scrape_comics('https://xkcd.com', 'xkcd')
 
 
 if __name__ == '__main__':

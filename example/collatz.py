@@ -9,10 +9,14 @@
 # 序列”，它有时候被称为“最简单的、不可能的数学问题”）。
 
 
-def collatz(number):
-    if number % 2 == 0:
-        return number // 2
-    return 3 * number + 1
+class Collatz:
+    def __init__(self, number):
+        self.number = number
+
+    def calculate(self):
+        if self.number % 2 == 0:
+            return self.number // 2
+        return 3 * self.number + 1
 
 
 if __name__ == '__main__':
@@ -20,7 +24,8 @@ if __name__ == '__main__':
         number = int(input('Enter a number: '))
 
         while number != 1:
-            number = collatz(number)
+            collatz = Collatz(number)
+            number = collatz.calculate()
             print(number)
     except ValueError:
         print('Enter the correct integer')
