@@ -1,3 +1,9 @@
+"""
+    10.4.1
+    创建日志
+"""
+
+
 import logging
 logging.basicConfig(level=logging.DEBUG, filename='myProgramLog.txt', format='%(asctime)s - %(levelname)s- %(message)s')
 logging.debug('Start of program')
